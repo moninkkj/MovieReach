@@ -7,6 +7,11 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 
+struct MovieCredits {
+    std :: vector <std ::string> directors, actors;
+};
+
+
 struct Movie {
     std :: string title;
     std :: string release_date;
@@ -20,6 +25,8 @@ struct Movie {
     long long revenue;
 
     std :: vector<std :: string> genres;
+
+    MovieCredits credits;
 };
 
 struct MovieSearchResult {
@@ -38,3 +45,5 @@ void show_movie_from_list(const std :: vector <MovieSearchResult> &movies);
 std :: string join_arguments(int argc, char *argv[], int startIndex);
 void print_help();
 std :: string string_format_number(long long value);
+MovieCredits get_movie_credits(int movieId);
+MovieCredits parse_movie_credits(const nlohmann :: json& data);

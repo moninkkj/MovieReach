@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <curl/curl.h>
 #include <iomanip>
+#include <algorithm>
 
 #include "movie.h"
 #include "http.h"
@@ -44,6 +45,29 @@ void print_movie(const Movie &movie) {
     std :: cout << std::endl;
     std :: cout << "Overview: ";
     std :: cout << movie.overview << std::endl;
+    std :: cout << "Directors: ";
+    for (std :: size_t i = 0; i < movie.credits.directors.size(); ++i) {
+        if (i != 0) {
+            std :: cout << ", ";
+        }
+        std :: cout << movie.credits.directors[i];
+    }
+    if (movie.credits.directors.empty()) {
+        std :: cout << "Unknown";
+    }
+    std :: cout << '\n';
+    std :: cout << "Actors: ";
+    const std :: size_t actorsCount = std :: min(movie.credits.actors.size(), std :: size_t{5});
+    for (std :: size_t i = 0; i < actorsCount; ++i) {
+        if (i != 0) {
+            std :: cout << ", ";
+        }
+        std :: cout << movie.credits.actors[i];
+    }
+    if (movie.credits.actors.empty()) {
+        std :: cout << "Unknown";
+    }
+    std :: cout << '\n';
 }
 
 int select_movie(const std ::vector <MovieSearchResult>& searchResults) {
@@ -135,7 +159,14 @@ Movie get_movie(int needId) {
 
     nlohmann :: json datamovie = nlohmann ::json::parse(movieResponse);
 
-    return parse_movie(datamovie);
+    Movie movie = parse_movie(datamovie);
+
+    MovieCredits movieCredits = get_movie_credits(needId);
+
+    movie.credits.actors = movieCredits.actors;
+    movie.credits.directors = movieCredits.directors;
+
+    return movie;
 }
 
 int get_movie_by_id(const std :: string & id) {
@@ -192,4 +223,27 @@ void print_help() {
         "  top               Show top-rated movies\n"
         "  help              Show this help message\n"
     ;
+}
+
+MovieCredits parse_movie_credits(const nlohmann :: json& data) {
+    MovieCredits movieCredits;
+    for (const auto & elem : data["cast"]) {
+        movieCredits.actors.push_back(elem["name"].get<std::string>());
+    }
+
+    for (const auto & elem : data["crew"]) {
+        if (elem["job"] == "Director") {
+            movieCredits.directors.push_back(elem["name"].get<std::string>());
+        }
+    }
+
+    return movieCredits;
+}
+
+MovieCredits get_movie_credits(int movieId) {
+    std :: string moviecreditsUrl = urlfilm + std :: to_string(movieId) + "/credits?api_key=" + get_api_key();
+
+    std :: string response = http_get(moviecreditsUrl);
+
+    return parse_movie_credits(nlohmann::json::parse(response));
 }

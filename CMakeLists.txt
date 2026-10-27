@@ -30,6 +30,21 @@ add_executable(test_format_number
         http.cpp
 )
 
+add_executable(test_movie_credits
+        tests/test_movie_credits.cpp
+        movie.cpp
+        http.cpp
+)
+
+target_include_directories(test_movie_credits PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(test_movie_credits PRIVATE
+        CURL::libcurl
+        nlohmann_json::nlohmann_json
+)
+
 target_include_directories(test_format_number PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -54,4 +69,9 @@ add_test(
 add_test(
         NAME FormatNumbersTests
         COMMAND test_format_number
+)
+
+add_test(
+        NAME MovieCreditsTest
+        COMMAND test_movie_credits
 )
