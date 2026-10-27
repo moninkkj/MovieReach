@@ -20,6 +20,7 @@ add_executable(MovieReach
 add_executable(test_movie_id
         tests/test_movie_id.cpp
         cli.cpp
+        tests/test_format_number.cpp
 )
 
 target_include_directories(test_movie_id PRIVATE
@@ -29,4 +30,11 @@ target_include_directories(test_movie_id PRIVATE
 target_link_libraries(MovieReach PRIVATE
         CURL::libcurl
         nlohmann_json::nlohmann_json
+)
+
+enable_testing()
+
+add_test(
+        NAME MovieIdTests
+        COMMAND test_movie_id
 )
