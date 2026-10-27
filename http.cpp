@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <ostream>
+#include <memory>
 
 std :: string get_api_key() {
     const char* key = std :: getenv("API_KEY");
