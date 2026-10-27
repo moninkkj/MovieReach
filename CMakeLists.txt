@@ -13,21 +13,33 @@ add_executable(MovieReach
         http.h
         http.cpp
         cli.cpp
-        cli.h
-        cli.cpp
         cli.h)
 
 add_executable(test_movie_id
         tests/test_movie_id.cpp
         cli.cpp
-        tests/test_format_number.cpp
 )
 
 target_include_directories(test_movie_id PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+add_executable(test_format_number
+        tests/test_format_number.cpp
+        movie.cpp
+        http.cpp
+)
+
+target_include_directories(test_format_number PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 target_link_libraries(MovieReach PRIVATE
+        CURL::libcurl
+        nlohmann_json::nlohmann_json
+)
+
+target_link_libraries(test_format_number PRIVATE
         CURL::libcurl
         nlohmann_json::nlohmann_json
 )
@@ -37,4 +49,9 @@ enable_testing()
 add_test(
         NAME MovieIdTests
         COMMAND test_movie_id
+)
+
+add_test(
+        NAME FormatNumbersTests
+        COMMAND test_format_number
 )

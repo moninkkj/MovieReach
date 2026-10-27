@@ -37,3 +37,4 @@ std :: vector <MovieSearchResult> get_top_movies();
 void show_movie_from_list(const std :: vector <MovieSearchResult> &movies);
 std :: string join_arguments(int argc, char *argv[], int startIndex);
 void print_help();
+std :: string string_format_number(long long value);
